@@ -498,7 +498,6 @@ void *TrainModelThread(void *id) {
       }
     } else {  //train skip-gram
       for (a = b; a < window * 2 + 1 + sentence_vectors - b; a++) if (a != window) {
-        int w_size = window * 2 + 1 + sentence_vectors - b;
         c = sentence_position - window + a;
         if (sentence_vectors) if (a >= window * 2 + sentence_vectors - b) c = 0;
         if (c < 0) continue;
@@ -538,11 +537,17 @@ void *TrainModelThread(void *id) {
           l2 = target * layer1_size;
           f = 0;
           for (c = 0; c < layer1_size; c++) f += syn0[c + l1] * syn1neg[c + l2];
-          if (f > MAX_EXP) g = (label - 1) * alpha;
-          else if (f < -MAX_EXP) g = (label - 0) *  alpha;
-          else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
-          for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn1neg[c + l2];
-          for (c = 0; c < layer1_size; c++) syn1neg[c + l2] = syn0[c + l1];
+          for (c = 0; c < layer1_size; c++) f += syn0[c + l1] * syn0[c + l2];
+          if (f > MAX_EXP) g = (label - 1);
+          else if (f < -MAX_EXP) g = (label - 0);
+          else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]);
+          for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn0[c + l2];
+          for (c = 0; c < layer1_size; c++) _syn0[c + l2] = syn0[c + l1];
+        //   if (f > MAX_EXP) g = (label - 1) * alpha;
+        //   else if (f < -MAX_EXP) g = (label - 0) *  alpha;
+        //   else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
+        //   for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn1neg[c + l2];
+        //   for (c = 0; c < layer1_size; c++) syn1neg[c + l2] = syn0[c + l1];
           int sum = 0;
           int satisfied = 0;
           real rate = 1;

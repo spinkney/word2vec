@@ -542,7 +542,7 @@ void *TrainModelThread(void *id) {
           else if (f < -MAX_EXP) g = (label - 0);
           else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]);
           for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn0[c + l2];
-          for (c = 0; c < layer1_size; c++) _syn0[c + l2] = syn0[c + l2];
+          for (c = 0; c < layer1_size; c++) _syn0[c] = syn0[c + l2];
           int sum = 0;
           int satisfied = 0;
           real rate = 1;
@@ -578,7 +578,7 @@ void *TrainModelThread(void *id) {
 		real rate = 1;
 		for (c = 0; c < layer1_size; c++) _syn0[c] = syn0[c + l1];
         // Learn weights input -> hidden
-        for (c = 0; c < layer1_size; c++) syn0[c + l1] += neu1e[c];
+        // for (c = 0; c < layer1_size; c++) syn0[c + l1] += neu1e[c];
         while(satisfied != 10){
 				//for (c = 0; c < layer1_size; c++) sum += fabs(syn0[c + l1]);
 				for (c = 0; c < layer1_size; c++){

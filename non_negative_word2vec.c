@@ -537,12 +537,12 @@ void *TrainModelThread(void *id) {
           }
           l2 = target * layer1_size;
           f = 0;
-          for (c = 0; c < layer1_size; c++) f += syn0[c + l1] * syn1neg[c + l2];
-          if (f > MAX_EXP) g = (label - 1) * alpha;
-          else if (f < -MAX_EXP) g = (label - 0) *  alpha;
-          else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
-          for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn1neg[c + l2];
-          for (c = 0; c < layer1_size; c++) syn1neg[c + l2] = syn0[c + l1];
+          for (c = 0; c < layer1_size; c++) f += syn0[c + l1] * syn0[c + l2];
+          if (f > MAX_EXP) g = (label - 1);
+          else if (f < -MAX_EXP) g = (label - 0);
+          else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]);
+          for (c = 0; c < layer1_size; c++) neu1e[c] += g * syn0[c + l2];
+          for (c = 0; c < layer1_size; c++) _syn0[c + l2] = syn0[c + l1];
           int sum = 0;
           int satisfied = 0;
           real rate = 1;
@@ -568,7 +568,7 @@ void *TrainModelThread(void *id) {
 						for (c = 0; c < layer1_size; c++) syn0[c + l2] = _syn0[c];
 					}
             satisfied += 1;
-			rate *= 0.6;
+			      rate *= 0.6;
           }
           rateTable[target] *= (1 - 10 / (real)(iter * train_words + 1));
           if (rateTable[target] < starting_alpha * 0.0001) rateTable[target] = starting_alpha * 0.0001;
@@ -579,7 +579,7 @@ void *TrainModelThread(void *id) {
 		for (c = 0; c < layer1_size; c++) _syn0[c] = syn0[c + l1];
         // Learn weights input -> hidden
         for (c = 0; c < layer1_size; c++) syn0[c + l1] += neu1e[c];
-        	while(satisfied != 10){
+        while(satisfied != 10){
 				//for (c = 0; c < layer1_size; c++) sum += fabs(syn0[c + l1]);
 				for (c = 0; c < layer1_size; c++){
 					//real l_norm1 = 0;
